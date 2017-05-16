@@ -16,13 +16,9 @@ int photocellReading4;     // the analog reading from the analog resistor divide
 int photocell_average;     // sum up the reading and average it 
 int LEDpin1 = 3;          // connect Red LED to pin 3 (PWM pin) (white LED)
 int LEDpin2 = 10;          // connect Red LED to pin 10 (PWM pin) (white LED)
- 
-void setup(void) {
-  // We'll send debugging information via the Serial monitor
-  Serial.begin(9600);   
-}
- 
-void loop(void) {
+
+
+void light (void) {
   photocellReading1 = analogRead(photocellPin1);  
   photocellReading2 = analogRead(photocellPin2);
   photocellReading3 = analogRead(photocellPin3);
@@ -41,18 +37,18 @@ void loop(void) {
     Serial.println(" - Dim");
     analogWrite(LEDpin1,255);
     analogWrite(LEDpin2,0);
-  } else if (photocell_average < 500) {
-    analogWrite(LEDpin1,0);
-    analogWrite(LEDpin2,0);
-    Serial.println(" - Light");
-  } else if (photocell_average < 800) {
-    analogWrite(LEDpin1,0);
-    analogWrite(LEDpin2,0);
-    Serial.println(" - Bright");
   } else {
-    Serial.println(" - Very bright");
+    Serial.println(" - Light");
     analogWrite(LEDpin1,0);
     analogWrite(LEDpin2,0);
   }
   delay(100);
+}
+void setup(void) {
+  // We'll send debugging information via the Serial monitor
+  Serial.begin(9600);   
+}
+ 
+void loop(void) {
+  light;
 }
