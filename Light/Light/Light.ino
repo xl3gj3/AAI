@@ -60,6 +60,7 @@ void light (void) {
     digitalWrite(LEDpin2,LOW);
   }
   //This is for the blue and red LED, which will be controll by the app. Using button as the input pretent using app, so we keep sending output
+    // 2 variables will be passed into this function to turn on/off blue/red LEDs
   digitalWrite(LEDpin3,HIGH);
   delay(100);
 }
@@ -72,5 +73,13 @@ void setup(void) {
 }
  
 void loop(void) {
+  update_sensor_data();// water level, all sensors data are read in this functions
+  //timing issue
   light();
+
+
+
+
+
+  
 }
