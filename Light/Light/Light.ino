@@ -18,8 +18,9 @@ int LEDpin1 = 2;          // connect Red LED to pin 2 (PWM pin) (white LED)
 int LEDpin2 = 3;          // connect Red LED to pin 3 (PWM pin) (white LED)
 int LEDpin3 = 4;          // connect Red LED to pin 2 (PWM pin) (white LED)
 int LEDpin4 = 5;          // connect Red LED to pin 3 (PWM pin) (white LED)
-
-
+// parameter for light
+int dim_min = 600;
+int dim_max = 700;
 
 void light (void) {
   photocellReading1 = analogRead(photocellPin1);  
@@ -44,12 +45,12 @@ void light (void) {
   Serial.print(photocell_average);     // the raw analog reading
   Serial.print("\n");
   // Different readings from analog will result in different light intensity. The number will be determine more accurately later
-  if (photocell_average < 600) {
+  if (photocell_average < dim_min) {
     Serial.println(" - Dark");
     digitalWrite(LEDpin1,HIGH);
     digitalWrite(LEDpin2,HIGH);
      
-  } else if (photocell_average < 700 && photocell_average > 600) {
+  } else if (photocell_average < dim_max && photocell_average > dim_min) {
     Serial.println(" - Dim");
     digitalWrite(LEDpin1,HIGH);
     digitalWrite(LEDpin2,LOW);
