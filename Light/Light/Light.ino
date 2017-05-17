@@ -14,8 +14,11 @@ int photocellReading2;     // the analog reading from the analog resistor divide
 int photocellReading3;     // the analog reading from the analog resistor divider
 int photocellReading4;     // the analog reading from the analog resistor divider
 int photocell_average;     // sum up the reading and average it 
-int LEDpin1 = 2;          // connect Red LED to pin 3 (PWM pin) (white LED)
-int LEDpin2 = 3;          // connect Red LED to pin 10 (PWM pin) (white LED)
+int LEDpin1 = 2;          // connect Red LED to pin 2 (PWM pin) (white LED)
+int LEDpin2 = 3;          // connect Red LED to pin 3 (PWM pin) (white LED)
+int LEDpin3 = 4;          // connect Red LED to pin 2 (PWM pin) (white LED)
+int LEDpin4 = 5;          // connect Red LED to pin 3 (PWM pin) (white LED)
+
 
 
 void light (void) {
@@ -24,6 +27,7 @@ void light (void) {
   photocellReading3 = analogRead(photocellPin3);
   photocellReading4 = analogRead(photocellPin4);
   photocell_average = (photocellReading1 + photocellReading2 + photocellReading3 + photocellReading4)/4; 
+  //Below is debugging msgs.
   Serial.print("Analog1 reading = ");
   Serial.print(photocellReading1);     // the raw analog reading
   Serial.print("\n");
@@ -39,7 +43,7 @@ void light (void) {
   Serial.print("Analog_avg reading = ");
   Serial.print(photocell_average);     // the raw analog reading
   Serial.print("\n");
-  // We'll have a few threshholds, qualitatively determined
+  // Different readings from analog will result in different light intensity. The number will be determine more accurately later
   if (photocell_average < 600) {
     Serial.println(" - Dark");
     digitalWrite(LEDpin1,HIGH);
@@ -54,6 +58,8 @@ void light (void) {
     digitalWrite(LEDpin1,LOW);
     digitalWrite(LEDpin2,LOW);
   }
+  //This is for the blue and red LED, which will be controll by the app. Using button as the input pretent using app, so we keep sending output
+  digitalWrite(LEDpin3,HIGH);
   delay(100);
 }
 void setup(void) {
@@ -61,6 +67,7 @@ void setup(void) {
   Serial.begin(9600);
   pinMode(LEDpin1, OUTPUT);
   pinMode(LEDpin2, OUTPUT);  
+  pinMode(LEDpin3, OUTPUT); 
 }
  
 void loop(void) {
