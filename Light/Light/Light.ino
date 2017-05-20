@@ -21,14 +21,18 @@ int LEDpin4 = 5;          // connect Red LED to pin 3 (PWM pin) (white LED)
 // parameter for light
 int dim_min = 600;
 int dim_max = 700;
+boolean red_led = false;
+boolean blue_led = false;
+boolean white_led_1 = false;
+boolean white_led_2 = false;
 
-void light (void) {
+void reading_light_sensors (void){
   photocellReading1 = analogRead(photocellPin1);  
   photocellReading2 = analogRead(photocellPin2);
   photocellReading3 = analogRead(photocellPin3);
   photocellReading4 = analogRead(photocellPin4);
   photocell_average = (photocellReading1 + photocellReading2 + photocellReading3 + photocellReading4)/4; 
-  //Below is debugging msgs.
+    //Below is debugging msgs.
   Serial.print("Analog1 reading = ");
   Serial.print(photocellReading1);     // the raw analog reading
   Serial.print("\n");
@@ -44,6 +48,14 @@ void light (void) {
   Serial.print("Analog_avg reading = ");
   Serial.print(photocell_average);     // the raw analog reading
   Serial.print("\n");
+}
+
+void update_sensor_data (void){
+  reading_light_sensors();
+}
+void light (boolean red_led, boolean blue_led) {
+
+
   // Different readings from analog will result in different light intensity. The number will be determine more accurately later
   if (photocell_average < dim_min) {
     Serial.println(" - Dark");
@@ -75,7 +87,7 @@ void setup(void) {
 void loop(void) {
   update_sensor_data();// water level, all sensors data are read in this functions
   //timing issue
-  light();
+  light(red_led,blue_led);
 
 
 
