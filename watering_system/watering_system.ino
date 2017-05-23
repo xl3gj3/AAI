@@ -13,6 +13,7 @@ int moisture_avg = 0;
 boolean sensor_flag_1 = true;
 boolean sensor_flag_2 = true;
 boolean watering = false;
+boolean manual_pump = false;
 
 void setup() {
 // initialize serial communication at 9600 bits per second:
@@ -66,8 +67,9 @@ void moisture_status_state (){
   }
 }
 
-void pumping (){
-
+void pumping (boolean manual_pump){
+  /*Add the condition to consider manaul pump feature first, if manual pump is on, we won't consider any condition for auto mode */
+  /**************************************/
   if (!sensor_flag_1 || !sensor_flag_2){
       Serial.print("\tOne of the Soil sensors is not connect to soil\n");
   }
@@ -87,7 +89,7 @@ void loop() {
 // read the input on analog pin 0:
   update_sensor_data();
   moisture_status_state();
-  pumping();
+  pumping(manual_pump);
   delay(1000);
 }
 
