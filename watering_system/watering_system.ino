@@ -1,4 +1,6 @@
 #include <Time.h>
+#include <TimeLib.h>
+
 
 
  #define CH1 7   // Connect Digital Pin 7 on Arduino to CH1 on Relay Module
@@ -22,6 +24,7 @@ pinMode(CH1, OUTPUT);
 //Turn OFF any power to the Relay channels
 digitalWrite(CH1,LOW);
 delay(2000); //Wait 2 seconds before starting sequence
+
 }
 
 void reading_moisture_sensors(void){
@@ -70,14 +73,9 @@ void pumping (){
   }
 
   if (watering){
-    if (false){
-      digitalWrite(CH1, LOW);
-        /*This part is for timing issue*/
-  
-         /**-------------------------------------*/
-      }else {
-     digitalWrite(CH1, HIGH);        
-    }
+       digitalWrite(CH1, HIGH);
+       delay(2000);
+       digitalWrite(CH1, LOW);        
   }else {
      digitalWrite(CH1, LOW);
     }
