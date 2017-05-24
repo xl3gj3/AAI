@@ -21,6 +21,8 @@ int LEDpin4 = 5;          // connect Red LED to pin 3 (PWM pin) (white LED)
 // parameter for light
 int dim_min = 600;
 int dim_max = 700;
+boolean switch_red_led = false;
+boolean switch_blue_led = false;
 boolean red_led = false;
 boolean blue_led = false;
 boolean white_led_1 = false;
@@ -54,7 +56,7 @@ void update_sensor_data (void){
   reading_light_sensors();
 }
 
-void light_status (boolean red_led, boolean blue_led) {
+void light_status (boolean switch_red_led, boolean switch_blue_led) {
 
 
   // Different readings from analog will result in different light intensity. The number will be determine more accurately later
@@ -74,15 +76,38 @@ void light_status (boolean red_led, boolean blue_led) {
   }
   //This is for the blue and red LED, which will be controll by the app. Using button as the input pretent using app, so we keep sending output
     // 2 variables will be passed into this function to turn on/off blue/red LEDs
-  digitalWrite(LEDpin3,HIGH);
+  if (switch_red_led){
+    red_led = true;
+    }else{
+      red_led = false;
+      }
+  if (switch_blue_led){
+    blue_led = true; 
+    }else{
+      blue_led = false;
+      }
   delay(100);
 }
+void turn_on_blue_red_led () {
+  if (blue_led){
+    digitalWrite(LEDpin3,HIGH);
+    }else {
+      digitalWrite(LEDpin3,LOW);
+      } 
+  if (red_led){
+      digitalWrite(LEDpin3,HIGH);
+    }else {
+      digitalWrite(LEDpin3,LOW);
+      } 
+  
+  }
 void setup(void) {
   // We'll send debugging information via the Serial monitor
   Serial.begin(9600);
   pinMode(LEDpin1, OUTPUT);
   pinMode(LEDpin2, OUTPUT);  
   pinMode(LEDpin3, OUTPUT); 
+  pinMode(LEDpin4, OUTPUT); 
 }
  void turn_on_white_light (){
   if (white_led_1 && white_led_2){
@@ -101,8 +126,9 @@ void setup(void) {
 void loop(void) {
   update_sensor_data();// water level, all sensors data are read in this functions
   //timing issue
-  light_status(red_led,blue_led);
+  light_status(switch_red_led,switch_blue_led);
   turn_on_white_light();
+  turn_on_blue_red_led();
   
 
 
