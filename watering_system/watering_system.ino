@@ -14,6 +14,7 @@ boolean sensor_flag_1 = true;
 boolean sensor_flag_2 = true;
 boolean watering = false;
 boolean manual_pump = false;
+boolean empty_water_tank = false;
 
 void setup() {
 // initialize serial communication at 9600 bits per second:
@@ -50,12 +51,14 @@ void moisture_status_state (){
     Serial.print("\tSoil sensor 2 is not connect to soil\n");
     sensor_flag_2 = false;
     watering = false;
-  }
-  else if(moisture_avg < 200 && moisture_avg > 20){
+  } else if (empty_water_tank){
+    watering = false; 
+    Serial.print("water tank is empty \n");    
+  } else if(moisture_avg < 200 && moisture_avg > 20){
    Serial.print(moisture_avg);
    Serial.print("\tWatering \n");
    watering = true;  
-  }  else{
+  } else {
     digitalWrite(CH1, LOW); 
     if(moisture_avg > 800){
       Serial.print("\tSoil is wet, not need to water\n");
