@@ -76,17 +76,21 @@ void pumping (boolean manual_pump){
   if (!sensor_flag_1 || !sensor_flag_2){
       Serial.print("\tOne of the Soil sensors is not connect to soil\n");
   }
-
-  if (watering){
-       digitalWrite(CH1, HIGH);
-       delay(2000);
-       digitalWrite(CH1, LOW);        
+  if (manual_pump){ 
+     digitalWrite(CH1, HIGH);
+     delay(2000);
+     digitalWrite(CH1, LOW);
+  }else if (watering){
+     digitalWrite(CH1, HIGH);
+     delay(2000);
+     digitalWrite(CH1, LOW);        
   }else {
      digitalWrite(CH1, LOW);
     }
   sensor_flag_1 = true;
   sensor_flag_2 = true;
-  watering = false;
+  watering = false; 
+  manual_pump = false; // Reset the flag. We will disable the button on the app for 5 seconds after user push it. so we don't want water pump active when user can not push the button
 }
 void loop() {
 // read the input on analog pin 0:
