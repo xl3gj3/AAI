@@ -95,9 +95,9 @@ void turn_on_blue_red_led () {
       digitalWrite(LEDpin3,LOW);
       } 
   if (red_led){
-      digitalWrite(LEDpin3,HIGH);
+      digitalWrite(LEDpin4,HIGH);
     }else {
-      digitalWrite(LEDpin3,LOW);
+      digitalWrite(LEDpin4,LOW);
       } 
   
   }
