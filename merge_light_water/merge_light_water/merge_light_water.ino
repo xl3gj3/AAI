@@ -23,6 +23,15 @@ int sensor_1 = 4;// temp decision, will change input pin later
 int sensor_2 = 5;
 int moisture_avg = 0;
 
+/***water level**/
+
+int water_level_warning_1 = 7; // LED connected to digital pin 7
+int water_level_warning_2 = 8; // LED connected to digital pin 8
+int level_1 = 9; // 20% level 
+int level_2 = 10; // 0% level 
+
+int on_1 = 0;// 20%
+int on_2 = 0;// 0%
 
  /*Output*/
  /***light***/
@@ -36,6 +45,9 @@ int water_pump = 6;       // connect water pump to pin 6
 // parameter for light
 int dim_min = 600;
 int dim_max = 700;
+int moisture_not_connect = 20;
+int moisture_standard = 200;
+
 /*flags*/
 boolean switch_red_led = false;
 boolean switch_blue_led = false;
@@ -48,7 +60,7 @@ boolean sensor_flag_1 = true;
 boolean sensor_flag_2 = true;
 boolean watering = false;
 boolean manual_pump = false;
-boolean empty_water_tank = false;
+boolean water_tank_empty = false;
 
 
 /*Sensors readings*/
@@ -63,10 +75,6 @@ void reading_light_sensors (void){
 void reading_moisture_sensors(void){
   moisture_1 = analogRead(sensor_1);
   moisture_2 = analogRead(sensor_2);
-  Serial.print(moisture_1);
-  Serial.print("above is sensor 1\n");
-  Serial.print(moisture_2);
-  Serial.print("above is sensor 2\n");
   moisture_avg = (moisture_1 + moisture_2)/2;
   }
 
@@ -135,30 +143,18 @@ void turn_on_blue_red_led () {
 /*soil moisture*/
 
 void moisture_status_state (){
-  if(moisture_1 < 20 ){
-    Serial.print("\tSoil sensor 1 is not connect to soil\n");
+  if(moisture_1 < moisture_not_connect ){
     sensor_flag_1 = false;
     watering = false;
-  } else if(moisture_2 < 20 ){
-    Serial.print("\tSoil sensor 2 is not connect to soil\n");
+  } else if(moisture_2 < moisture_not_connect ){
     sensor_flag_2 = false;
     watering = false;
-  } else if (empty_water_tank){
-    watering = false; 
-    Serial.print("water tank is empty \n");    
-  } else if(moisture_avg < 200 && moisture_avg > 20){
-   Serial.print(moisture_avg);
-   Serial.print("\tWatering \n");
+  } else if (water_tank_empty){
+    watering = false;     
+  } else if(moisture_avg < moisture_standard && moisture_avg > moisture_not_connect){
    watering = true;  
   } else {
-    digitalWrite(water_pump, LOW); 
-    if(moisture_avg > 800){
-      Serial.print("\tSoil is wet, not need to water\n");
-      watering = false;
-    }else{
-      Serial.print("\tSoil is fine!!!!\n");
-      watering = false;
-    }
+    watering = false;
   }
 }
 
@@ -166,7 +162,6 @@ void pumping (boolean manual_pump){
   /*Add the condition to consider manaul pump feature first, if manual pump is on, we won't consider any condition for auto mode */
   /**************************************/
   if (!sensor_flag_1 || !sensor_flag_2){
-      Serial.print("\tOne of the Soil sensors is not connect to soil\n");
   }
   if (manual_pump){ 
      digitalWrite(water_pump, HIGH);
@@ -184,6 +179,27 @@ void pumping (boolean manual_pump){
   watering = false; 
   manual_pump = false; // Reset the flag. We will disable the button on the app for 5 seconds after user push it. so we don't want water pump active when user can not push the button
 }
+/*water level*/
+void water_level_status(){
+  on_1 = digitalRead(level_1);   // read the input pin
+  on_2 = digitalRead(level_2);   // read the input pin
+  Serial.println(on_1);
+  Serial.println(on_2);
+  if(on_1 == 0){
+      digitalWrite(water_level_warning_1,HIGH);
+  }else{
+      digitalWrite(water_level_warning_1,LOW);
+  }
+  if(on_2 == 0){
+      digitalWrite(water_level_warning_2,HIGH);
+      water_tank_empty = true;
+  }else{
+      digitalWrite(water_level_warning_2,LOW);
+      water_tank_empty = false;
+  }
+  delay(1000);
+  
+}
 
 /*set up and loop*/
   void setup(void) {
@@ -194,10 +210,15 @@ void pumping (boolean manual_pump){
   pinMode(LEDpin3, OUTPUT); 
   pinMode(LEDpin4, OUTPUT); 
   pinMode(water_pump, OUTPUT);
+  pinMode(water_level_warning_1, OUTPUT);      // sets the digital pin 7 as output
+  pinMode(water_level_warning_2, OUTPUT);      // sets the digital pin 8 as output
+  pinMode(level_1, INPUT);      // sets the digital pin 9 as input
+  pinMode(level_2, INPUT);      // sets the digital pin 10 as input
   }
 void loop(void) {
   update_sensor_data();// water level, all sensors data are read in this functions
   //timing issue
+  water_level_status();
   moisture_status_state();
   pumping(manual_pump);
   light_status(switch_red_led,switch_blue_led);
