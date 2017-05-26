@@ -1,4 +1,6 @@
 #include <Time.h>
+#include <TimeLib.h>
+
 
 
  #define CH1 7   // Connect Digital Pin 7 on Arduino to CH1 on Relay Module
@@ -11,6 +13,8 @@ int moisture_avg = 0;
 boolean sensor_flag_1 = true;
 boolean sensor_flag_2 = true;
 boolean watering = false;
+boolean manual_pump = false;
+boolean empty_water_tank = false;
 
 void setup() {
 // initialize serial communication at 9600 bits per second:
@@ -22,6 +26,7 @@ pinMode(CH1, OUTPUT);
 //Turn OFF any power to the Relay channels
 digitalWrite(CH1,LOW);
 delay(2000); //Wait 2 seconds before starting sequence
+
 }
 
 void reading_moisture_sensors(void){
@@ -46,12 +51,14 @@ void moisture_status_state (){
     Serial.print("\tSoil sensor 2 is not connect to soil\n");
     sensor_flag_2 = false;
     watering = false;
-  }
-  else if(moisture_avg < 200 && moisture_avg > 20){
+  } else if (empty_water_tank){
+    watering = false; 
+    Serial.print("water tank is empty \n");    
+  } else if(moisture_avg < 200 && moisture_avg > 20){
    Serial.print(moisture_avg);
    Serial.print("\tWatering \n");
    watering = true;  
-  }  else{
+  } else {
     digitalWrite(CH1, LOW); 
     if(moisture_avg > 800){
       Serial.print("\tSoil is wet, not need to water\n");
@@ -63,33 +70,33 @@ void moisture_status_state (){
   }
 }
 
-void pumping (){
-
+void pumping (boolean manual_pump){
+  /*Add the condition to consider manaul pump feature first, if manual pump is on, we won't consider any condition for auto mode */
+  /**************************************/
   if (!sensor_flag_1 || !sensor_flag_2){
       Serial.print("\tOne of the Soil sensors is not connect to soil\n");
   }
-
-  if (watering){
-    if (false){
-      digitalWrite(CH1, LOW);
-        /*This part is for timing issue*/
-  
-         /**-------------------------------------*/
-      }else {
-     digitalWrite(CH1, HIGH);        
-    }
+  if (manual_pump){ 
+     digitalWrite(CH1, HIGH);
+     delay(2000);
+     digitalWrite(CH1, LOW);
+  }else if (watering){
+     digitalWrite(CH1, HIGH);
+     delay(2000);
+     digitalWrite(CH1, LOW);        
   }else {
      digitalWrite(CH1, LOW);
     }
   sensor_flag_1 = true;
   sensor_flag_2 = true;
-  watering = false;
+  watering = false; 
+  manual_pump = false; // Reset the flag. We will disable the button on the app for 5 seconds after user push it. so we don't want water pump active when user can not push the button
 }
 void loop() {
 // read the input on analog pin 0:
   update_sensor_data();
   moisture_status_state();
-  pumping();
+  pumping(manual_pump);
   delay(1000);
 }
 

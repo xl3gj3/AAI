@@ -3,8 +3,10 @@ int ledPin2 = 7; // LED connected to digital pin 13
 int level_1 = 3; // 20% level 
 int level_2 = 4; // 0% level 
 
-int on_1 = 0;
-int on_2 = 0;
+int on_1 = 0;// 20%
+int on_2 = 0;// 0%
+
+boolean water_tank_empty = false;
 void setup()
 {
   Serial.begin(9600);
@@ -26,8 +28,10 @@ void water_level_status(){
   }
   if(on_2 == 0){
       digitalWrite(ledPin2,HIGH);
+      water_tank_empty = true;
   }else{
       digitalWrite(ledPin2,LOW);
+      water_tank_empty = false;
   }
   delay(1000);
   
