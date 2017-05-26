@@ -16,8 +16,8 @@ int photocellReading4;     // the analog reading from the analog resistor divide
 int photocell_average;     // sum up the reading and average it 
 int LEDpin1 = 2;          // connect Red LED to pin 2 (PWM pin) (white LED)
 int LEDpin2 = 3;          // connect Red LED to pin 3 (PWM pin) (white LED)
-int LEDpin3 = 4;          // connect Red LED to pin 2 (PWM pin) (white LED)
-int LEDpin4 = 5;          // connect Red LED to pin 3 (PWM pin) (white LED)
+int LEDpin3 = 4;          // connect Red LED to pin 4 (PWM pin) (Blue LED)
+int LEDpin4 = 5;          // connect Red LED to pin 5 (PWM pin) (Red LED)
 // parameter for light
 int dim_min = 600;
 int dim_max = 700;
